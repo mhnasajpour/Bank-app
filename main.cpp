@@ -1,0 +1,6 @@
+#include "Classes/Bank.h"
+#include "Classes/Manager.h"
+#include "Classes/Client.h"
+#include "Classes/Account.h"
+#include "Classes/Borrow.h"
+#include "Classes/Date.h"
