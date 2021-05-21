@@ -5,11 +5,12 @@
 #include "Date.h"
 using namespace std;
 
-class Bank
+class BankBase
 {
 private:
     static int num;
 
+    int ID;
     string name;
     int branch;
     int *IDAccount;
@@ -23,10 +24,64 @@ private:
     string username;
     string password;
 
-public:
-    Bank(string _name = "", int _branch = 0, int *_IDAccount = nullptr, int *_IDBorrow = nullptr, int *_IDManager = nullptr, int *_IDRequestBorrow = nullptr, int _sizeAcc = 0, int _sizeBorrow = 0, int _sizeManager = 0, int _sizeRequest = 0, string _username = "", string _password = "");
+    BankBase *next;
 
-    static int setNum();
+public:
+    BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequest, string _username, string _password);
+    BankBase(int ID);
+    BankBase();
+
+    static int getNum();
+
+    int getID() const;
+    string getName() const;
+    int getBranch() const;
+    int *getIDAccount();
+    int *getIDBorrow();
+    int *getIDManager();
+    int *getIDRequestBorrow();
+    const int *getIDAccount() const;
+    const int *getIDBorrow() const;
+    const int *getIDManager() const;
+    const int *getIDRequestBorrow() const;
+    int getSizeAcc() const;
+    int getSizeBorrow() const;
+    int getSizeManager() const;
+    int getSizeRequest() const;
+    string getUsername() const;
+    string getPassword() const;
+    BankBase *getNext() const;
+
+    void setName(string _name);
+    void setBranch(int _branch);
+    void setIDAccount(int *_IDAccount);
+    void setIDBorrow(int *_IDBorrow);
+    void setIDManager(int *_IDManager);
+    void setIDRequestBorrow(int *_IDRequestBorrow);
+    void setSizeAcc(int _sizeAcc);
+    void setSizeBorrow(int _sizeBorrow);
+    void setSizeManager(int _sizeManager);
+    void setSizeRequest(int _sizeRequest);
+    void setUsername(string _username);
+    void setPassword(string _password);
+    void setNext(BankBase *_next);
+};
+
+class Bank
+{
+private:
+    BankBase *head;
+    BankBase *last;
+
+public:
+    Bank();
+    Bank(BankBase *head);
+
+    void add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequest, string _username, string _password);
+    void add(BankBase *_bank);
+    BankBase *operator[](int _ID);
+
+    ~Bank();
 };
 
 #endif

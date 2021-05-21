@@ -41,10 +41,8 @@ AccountBase::AccountBase(int _ID) //read from file
 
     ifstream file("Account.txt");
     for (int i = 0; i <= _ID; ++i)
-    {
-        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-
+        file.ignore(numeric_limits<streamsize>::max(), '\n');
+    
     file >> ID >> type >> IDBank >> isBlock >> IDClient >> balance >> openDate >> expDate >> profitDepositTime;
     next = nullptr;
     file.close();

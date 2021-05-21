@@ -26,10 +26,8 @@ BorrowBase::BorrowBase(int _ID) //read from file
 
     ifstream file("Borrow.txt");
     for (int i = 0; i <= _ID; ++i)
-    {
-        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-
+        file.ignore(numeric_limits<streamsize>::max(), '\n');
+    
     file >> ID >> IDBank >> IDClient >> IDAccget >> IDAccgive >> money >> numInstallments >> startTime >> endTime;
     next = nullptr;
     file.close();
