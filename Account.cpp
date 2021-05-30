@@ -41,6 +41,7 @@ AccountBase::AccountBase(int _ID) //read from file
     num++;
 
     ifstream file("Account.txt");
+
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
     
@@ -188,6 +189,8 @@ Account::Account(Client *client)
     int count;
     file >> count;
     file.close();
+    if(!file)
+        count = 0;
 
     int num = 0;
     while (count--)

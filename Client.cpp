@@ -4,7 +4,7 @@
 
 int ClientBase::num = 0;
 
-ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll, string _username, string _password) : birthDate(_day, _month, _year)
+ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year,string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll) : birthDate(_day, _month, _year)
 {
     ID = num++;
 
@@ -291,6 +291,8 @@ Client::Client()
     int count;
     file >> count;
     file.close();
+    if(!file)
+        count = 0;
 
     int num = 0;
     while (count--)
@@ -320,9 +322,9 @@ Client::Client(ClientBase *_head)
         last = last->getNext();
 }
 
-void Client::add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll, string _username, string _password)
+void Client::add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll)
 {
-    ClientBase *node = new ClientBase(_firstName, _lastName, _nationalCode, _day, _month, _year, _IDAccount, _IDBorrow, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeRequestAcc, _sizeRequestBorrow, _balanceAll, _username, _password);
+    ClientBase *node = new ClientBase(_firstName, _lastName, _nationalCode, _day, _month, _year,_username, _password, _IDAccount, _IDBorrow, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeRequestAcc, _sizeRequestBorrow, _balanceAll);
 
     if (head == nullptr)
     {

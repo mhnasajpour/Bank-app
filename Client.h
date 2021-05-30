@@ -30,7 +30,7 @@ private:
     ClientBase *next;
 
 public:
-    ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAccount, int _sizeRequestBorrow, long long unsigned _balanceAll, string username, string password);
+    ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, string username, string password, int *_IDAccount = nullptr, int *_IDBorrow = nullptr, int *_IDRequestAccount = nullptr, int *_IDRequestBorrow = nullptr, int _sizeAcc = 0, int _sizeBorrow = 0, int _sizeRequestAccount = 0, int _sizeRequestBorrow = 0, long long unsigned _balanceAll = 0);
     ClientBase(int ID);
     ClientBase();
 
@@ -86,7 +86,7 @@ public:
     Client();
     Client(ClientBase *head);
 
-    void add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll, string username, string password);
+    void add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, string username, string password, int *_IDAccount = nullptr, int *_IDBorrow = nullptr, int *_IDRequestAccount = nullptr, int *_IDRequestBorrow = nullptr, int _sizeAcc = 0, int _sizeBorrow = 0, int _sizeRequestAcc = 0, int _sizeRequestBorrow = 0, long long unsigned _balanceAll = 0);
     void add(ClientBase *_client);
     ClientBase *operator[](int _ID);
 
