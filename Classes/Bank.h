@@ -16,18 +16,20 @@ private:
     int *IDAccount;
     int *IDBorrow;
     int *IDManager;
+    int *IDRequestAccount;
     int *IDRequestBorrow;
     int sizeAcc;
     int sizeBorrow;
     int sizeManager;
-    int sizeRequest;
+    int sizeRequestAccount;
+    int sizeRequestBorrow;
     string username;
     string password;
 
     BankBase *next;
 
 public:
-    BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequest, string _username, string _password);
+    BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password);
     BankBase(int ID);
     BankBase();
 
@@ -39,15 +41,18 @@ public:
     int *getIDAccount();
     int *getIDBorrow();
     int *getIDManager();
+    int *getIDRequestAccount();
     int *getIDRequestBorrow();
     const int *getIDAccount() const;
     const int *getIDBorrow() const;
     const int *getIDManager() const;
+    const int *getIDRequestAccount() const;
     const int *getIDRequestBorrow() const;
     int getSizeAcc() const;
     int getSizeBorrow() const;
     int getSizeManager() const;
-    int getSizeRequest() const;
+    int getSizeRequestAccount() const;
+    int getSizeRequestBorrow() const;
     string getUsername() const;
     string getPassword() const;
     BankBase *getNext() const;
@@ -57,11 +62,13 @@ public:
     void setIDAccount(int *_IDAccount);
     void setIDBorrow(int *_IDBorrow);
     void setIDManager(int *_IDManager);
+    void setIDRequestAccount(int *_IDRequestAccount);
     void setIDRequestBorrow(int *_IDRequestBorrow);
     void setSizeAcc(int _sizeAcc);
     void setSizeBorrow(int _sizeBorrow);
     void setSizeManager(int _sizeManager);
-    void setSizeRequest(int _sizeRequest);
+    void setSizeRequestAccount(int _sizeRequestAccount);
+    void setSizeRequestBorrow(int _sizeRequestBorrow);
     void setUsername(string _username);
     void setPassword(string _password);
     void setNext(BankBase *_next);
@@ -77,7 +84,7 @@ public:
     Bank();
     Bank(BankBase *head);
 
-    void add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequest, string _username, string _password);
+    void add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password);
     void add(BankBase *_bank);
     BankBase *operator[](int _ID);
 

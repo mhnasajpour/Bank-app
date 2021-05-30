@@ -4,7 +4,7 @@
 
 int AccountBase::num = 0;
 
-AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _balance)
+AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, bool _isCheck) // isCheck : if this account was request isCheck is false else true
 {
     ID = num++;
 
@@ -12,7 +12,8 @@ AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _bal
     IDBank = _IDBank;
     IDClient = _IDClient;
     balance = _balance;
-    isBlock = 0;
+    isBlock = false;
+    isRegister = _isCheck;
     openDate = time(NULL);
     profitDepositTime = time(NULL);
 
@@ -43,11 +44,9 @@ AccountBase::AccountBase(int _ID) //read from file
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
     
-    file >> ID >> type >> IDBank >> isBlock >> IDClient >> balance >> openDate >> expDate >> profitDepositTime;
+    file >> ID >> type >> IDBank >> isBlock >> IDClient >> balance >> isRegister >> openDate >> expDate >> profitDepositTime;
     next = nullptr;
     file.close();
-
-    profitTime();
 }
 
 AccountBase::AccountBase()
@@ -62,27 +61,9 @@ AccountBase::AccountBase()
     profitDepositTime = time(NULL);
     expDate = openDate;
     isBlock = false;
+    isRegister = false;
 
     next = nullptr;
-}
-
-void AccountBase::profitTime()
-{
-    int count = (time(NULL) - profitDepositTime) / 86400;
-    profitDepositTime += count * 86400;
-
-    switch (type)
-    {
-    case 1:
-        balance *= (0.1 / 365) * count + 1;
-        break;
-    case 2:
-        balance *= (0.3 / 365) * count + 1;
-        break;
-    case 3:
-        balance *= (0.5 / 365) * count + 1;
-        break;
-    }
 }
 
 int AccountBase::getNum()
@@ -135,6 +116,11 @@ bool AccountBase::getIsBlock() const
     return isBlock;
 }
 
+bool AccountBase::getIsRegister() const
+{
+    return isRegister;
+}
+
 AccountBase *AccountBase::getNext() const
 {
     return next;
@@ -173,7 +159,14 @@ void AccountBase::setIDClient(int _IDClient)
 
 void AccountBase::setBalance(long double _balance)
 {
-    balance = _balance;
+    balance += _balance;
+}
+
+void AccountBase::setOpenDate(time_t _openDate)
+{
+    openDate = _openDate;
+    profitDepositTime = openDate;
+    setType(type);
 }
 
 void AccountBase::setIsBlock(bool _isBlock)
@@ -186,7 +179,7 @@ void AccountBase::setNext(AccountBase *_next)
     next = _next;
 }
 
-Account::Account()
+Account::Account(Client *client)
 {
     head = nullptr;
     last = nullptr;
@@ -212,21 +205,54 @@ Account::Account()
         last = last->getNext();
     }
 
+    profitTime(client);
     file.close();
 }
 
-Account::Account(AccountBase *_head)
+Account::Account(AccountBase *_head, Client *client)
 {
     head = _head;
 
     last = _head;
     while (last->getNext() != nullptr)
         last = last->getNext();
+
+    profitTime(client);
 }
 
-void Account::add(int _type, int _IDBank, int _IDClient, long double _balance)
+void Account::profitTime(Client *client)
 {
-    AccountBase *node = new AccountBase(_type, _IDBank, _IDClient, _balance);
+    AccountBase *current = head;
+    while(current)
+    {     
+        if(!current->getIsRegister())
+            return;
+
+        int count = (time(NULL) - current->getProfitTime()) / 86400;
+
+        switch (current->getType())
+        {
+        case 1:
+            current->setBalance((0.1 / 365) * count * current->getBalance());
+            (*client)[current->getIDClient()]->setBalanceAll((0.1 / 365) * count * current->getBalance());
+            break;
+        case 2:
+            current->setBalance((0.3 / 365) * count * current->getBalance());
+            (*client)[current->getIDClient()]->setBalanceAll((0.3 / 365) * count * current->getBalance());
+            break;
+        case 3:
+            current->setBalance((0.5 / 365) * count * current->getBalance());
+            (*client)[current->getIDClient()]->setBalanceAll((0.5 / 365) * count * current->getBalance());
+            break;
+        }
+
+        current = current->getNext();
+    }
+}
+
+void Account::add(int _type, int _IDBank, int _IDClient, long double _balance, bool _isCheck)
+{
+    AccountBase *node = new AccountBase(_type, _IDBank, _IDClient, _balance, _isCheck);
 
     if (head == nullptr)
     {
@@ -276,7 +302,7 @@ Account::~Account()
     for (int i = 0; i < AccountBase::getNum(); i++)
     {
         file << current->getID() << ' ' << current->getType() << ' ' << current->getIDBank() << ' ' << current->getIsBlock() << ' ';
-        file << current->getIDClient() << ' ' << current->getBalance() << ' ' << current->getOpenDate() << ' ' << current->getExpDate() << ' ' << current->getProfitTime() << endl;
+        file << current->getIDClient() << ' ' << current->getBalance() << ' ' << current->getIsRegister() << ' ' << current->getOpenDate() << ' ' << current->getExpDate() << ' ' << current->getProfitTime() << endl;
 
         current = current->getNext();
     }

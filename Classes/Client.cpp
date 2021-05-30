@@ -4,7 +4,7 @@
 
 int ClientBase::num = 0;
 
-ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int _sizeAcc, int _sizeBorrow, long long unsigned _balanceAll) : birthDate(_day, _month, _year)
+ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll, string _username, string _password) : birthDate(_day, _month, _year)
 {
     ID = num++;
 
@@ -13,9 +13,15 @@ ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode
     nationalCode = _nationalCode;
     IDAccount = _IDAccount;
     IDBorrow = _IDBorrow;
+    IDRequestAccount = _IDRequestAccount;
+    IDRequestBorrow = _IDRequestBorrow;
     sizeAcc = _sizeAcc;
     sizeBorrow = _sizeBorrow;
+    sizeRequestAccount = _sizeRequestAcc;
+    sizeRequestBorrow = _sizeRequestBorrow;
     balanceAll = _balanceAll;
+    username = _username;
+    password = _password;
 
     next = nullptr;
 }
@@ -48,6 +54,18 @@ ClientBase::ClientBase(int _ID)
     for (int i = 0; i < sizeBorrow; i++)
         file >> IDBorrow[i];
 
+    file >> sizeRequestAccount;
+    IDRequestAccount = (int *)malloc(sizeof(int) * sizeRequestAccount);
+    for (int i = 0; i < sizeRequestAccount; i++)
+        file >> IDRequestAccount[i];
+
+    file >> sizeRequestBorrow;
+    IDRequestBorrow = (int *)malloc(sizeof(int) * sizeRequestBorrow);
+    for (int i = 0; i < sizeRequestBorrow; i++)
+        file >> IDRequestBorrow[i];
+
+    file >> username >> password;
+
     next = nullptr;
     file.close();
 }
@@ -61,9 +79,15 @@ ClientBase::ClientBase()
     nationalCode = "0";
     IDAccount = nullptr;
     IDBorrow = nullptr;
+    IDRequestAccount = nullptr;
+    IDRequestBorrow = nullptr;
     sizeAcc = 0;
     sizeBorrow = 0;
+    sizeRequestAccount = 0;
+    sizeRequestBorrow = 0;
     balanceAll = 0;
+    username = "";
+    password = "";
 
     next = nullptr;
 }
@@ -118,6 +142,26 @@ const int *ClientBase::getIDBorrow() const
     return IDBorrow;
 }
 
+int *ClientBase::getIDRequestAccount()
+{
+    return IDRequestAccount;
+}
+
+const int *ClientBase::getIDRequestAccount() const
+{
+    return IDRequestAccount;
+}
+
+int *ClientBase::getIDRequestBorrow()
+{
+    return IDRequestBorrow;
+}
+
+const int *ClientBase::getIDRequestBorrow() const
+{
+    return IDRequestBorrow;
+}
+
 int ClientBase::getSizeAcc() const
 {
     return sizeAcc;
@@ -128,9 +172,29 @@ int ClientBase::getSizeBorrow() const
     return sizeBorrow;
 }
 
+int ClientBase::getSizeRequestAcc() const
+{
+    return sizeRequestAccount;
+}
+
+int ClientBase::getSizeRequestBorrow() const
+{
+    return sizeRequestBorrow;
+}
+
 long long unsigned ClientBase::getBalanceAll() const
 {
     return balanceAll;
+}
+
+string ClientBase::getUsername() const
+{
+    return username;
+}
+
+string ClientBase::getPassword() const
+{
+    return password;
 }
 
 ClientBase *ClientBase::getNext() const
@@ -168,6 +232,16 @@ void ClientBase::setIDBorrow(int *_IDBorrow)
     IDBorrow = _IDBorrow;
 }
 
+void ClientBase::setIDRequestAccount(int *_IDRequestAccount)
+{
+    IDRequestAccount = _IDRequestAccount;
+}
+
+void ClientBase::setIDRequestBorrow(int *_IDRequestBorrow)
+{
+    IDRequestBorrow = _IDRequestBorrow;
+}
+
 void ClientBase::setSizeAcc(int _sizeAcc)
 {
     sizeAcc = _sizeAcc;
@@ -178,9 +252,29 @@ void ClientBase::setSizeBorrow(int _sizeBorrow)
     sizeBorrow = _sizeBorrow;
 }
 
+void ClientBase::setSizeRequestAcc(int _sizeRequestAcc)
+{
+    sizeRequestAccount = _sizeRequestAcc;
+}
+
+void ClientBase::setSizeRequestBorrow(int _sizeRequestBorrow)
+{
+    sizeRequestBorrow = _sizeRequestBorrow;
+}
+
 void ClientBase::setBalanceAll(long long unsigned _balanceAll)
 {
-    balanceAll = _balanceAll;
+    balanceAll += _balanceAll;
+}
+
+void ClientBase::setUsername(string _username)
+{
+    username = _username;
+}
+
+void ClientBase::setPassword(string _password)
+{
+    password = _password;
 }
 
 void ClientBase::setNext(ClientBase *_next)
@@ -226,9 +320,9 @@ Client::Client(ClientBase *_head)
         last = last->getNext();
 }
 
-void Client::add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int _sizeAcc, int _sizeBorrow, long long unsigned _balanceAll)
+void Client::add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll, string _username, string _password)
 {
-    ClientBase *node = new ClientBase(_firstName, _lastName, _nationalCode, _day, _month, _year, _IDAccount, _IDBorrow, _sizeAcc, _sizeBorrow, _balanceAll);
+    ClientBase *node = new ClientBase(_firstName, _lastName, _nationalCode, _day, _month, _year, _IDAccount, _IDBorrow, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeRequestAcc, _sizeRequestBorrow, _balanceAll, _username, _password);
 
     if (head == nullptr)
     {
@@ -289,7 +383,16 @@ Client::~Client()
         for (int i = 0; i < current->getSizeBorrow(); i++)
             file << current->getIDBorrow()[i] << ' ';
 
-        file << endl;
+        file << current->getSizeRequestAcc() << ' ';
+        for (int i = 0; i < current->getSizeRequestAcc(); i++)
+            file << current->getIDRequestAccount()[i] << ' ';
+
+        file << current->getSizeRequestBorrow() << ' ';
+        for (int i = 0; i < current->getSizeRequestBorrow(); i++)
+            file << current->getIDRequestBorrow()[i] << ' ';
+
+        file << current->getUsername() << ' ' << current->getPassword() << endl;
+
         current = current->getNext();
     }
 

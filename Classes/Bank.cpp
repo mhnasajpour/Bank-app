@@ -4,7 +4,7 @@
 
 int BankBase::num = 0;
 
-BankBase::BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequest, string _username, string _password)
+BankBase::BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password)
 {
     ID = num++;
 
@@ -13,11 +13,13 @@ BankBase::BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, i
     IDAccount = _IDAccount;
     IDBorrow = _IDBorrow;
     IDManager = _IDManager;
+    IDRequestAccount = _IDRequestAccount;
     IDRequestBorrow = _IDRequestBorrow;
     sizeAcc = _sizeAcc;
     sizeBorrow = _sizeBorrow;
     sizeManager = _sizeManager;
-    sizeRequest = _sizeRequest;
+    sizeRequestAccount = _sizeRequestAccount;
+    sizeRequestBorrow = _sizeRequestBorrow;
     username = _username;
     password = _password;
 
@@ -49,9 +51,14 @@ BankBase::BankBase(int _ID)
     for (int i = 0; i < sizeManager; i++)
         file >> IDManager[i];
 
-    file >> sizeRequest;
-    IDRequestBorrow = (int *)malloc(sizeof(int) * sizeRequest);
-    for (int i = 0; i < sizeRequest; i++)
+    file >> sizeRequestAccount;
+    IDRequestBorrow = (int *)malloc(sizeof(int) * sizeRequestAccount);
+    for (int i = 0; i < sizeRequestAccount; i++)
+        file >> IDRequestAccount[i];
+    
+    file >> sizeRequestBorrow;
+    IDRequestBorrow = (int *)malloc(sizeof(int) * sizeRequestBorrow);
+    for (int i = 0; i < sizeRequestBorrow; i++)
         file >> IDRequestBorrow[i];
 
     getline(file, name);
@@ -69,11 +76,13 @@ BankBase::BankBase()
     IDAccount = nullptr;
     IDBorrow = nullptr;
     IDManager = nullptr;
+    IDRequestAccount = nullptr;
     IDRequestBorrow = nullptr;
     sizeAcc = 0;
     sizeBorrow = 0;
     sizeManager = 0;
-    sizeRequest = 0;
+    sizeRequestAccount = 0;
+    sizeRequestBorrow = 0;
     username = "";
     password = "";
 
@@ -115,6 +124,11 @@ int *BankBase::getIDManager()
     return IDManager;
 }
 
+int *BankBase::getIDRequestAccount()
+{
+    return IDRequestAccount;
+}
+
 int *BankBase::getIDRequestBorrow()
 {
     return IDRequestBorrow;
@@ -133,6 +147,11 @@ const int *BankBase::getIDBorrow() const
 const int *BankBase::getIDManager() const
 {
     return IDManager;
+}
+
+const int *BankBase::getIDRequestAccount() const
+{
+    return IDRequestAccount;
 }
 
 const int *BankBase::getIDRequestBorrow() const
@@ -155,9 +174,14 @@ int BankBase::getSizeManager() const
     return sizeManager;
 }
 
-int BankBase::getSizeRequest() const
+int BankBase::getSizeRequestAccount() const
 {
-    return sizeRequest;
+    return sizeRequestAccount;
+}
+
+int BankBase::getSizeRequestBorrow() const
+{
+    return sizeRequestBorrow;
 }
 
 string BankBase::getUsername() const
@@ -200,6 +224,11 @@ void BankBase::setIDManager(int *_IDManager)
     IDManager = _IDManager;
 }
 
+void BankBase::setIDRequestAccount(int *_IDRequestAccount)
+{
+    IDRequestAccount = _IDRequestAccount;
+}
+
 void BankBase::setIDRequestBorrow(int *_IDRequestBorrow)
 {
     IDRequestBorrow = _IDRequestBorrow;
@@ -220,9 +249,14 @@ void BankBase::setSizeManager(int _sizeManager)
     sizeManager = _sizeManager;
 }
 
-void BankBase::setSizeRequest(int _sizeRequest)
+void BankBase::setSizeRequestAccount(int _sizeRequestAccount)
 {
-    sizeRequest = _sizeRequest;
+    sizeRequestAccount = _sizeRequestAccount;
+}
+
+void BankBase::setSizeRequestBorrow(int _sizeRequestBorrow)
+{
+    sizeRequestBorrow = _sizeRequestBorrow;
 }
 
 void BankBase::setUsername(string _username)
@@ -278,9 +312,9 @@ Bank::Bank(BankBase *_head)
         last = last->getNext();
 }
 
-void Bank::add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequest, string _username, string _password)
+void Bank::add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password)
 {
-    BankBase *node = new BankBase(_name, _branch, _IDAccount, _IDBorrow, _IDManager, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeManager, _sizeRequest, _username, _password);
+    BankBase *node = new BankBase(_name, _branch, _IDAccount, _IDBorrow, _IDManager, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeManager, _sizeRequestAccount, _sizeRequestBorrow, _username, _password);
 
     if (head == nullptr)
     {
@@ -343,8 +377,12 @@ Bank::~Bank()
         for (int i = 0; i < current->getSizeManager(); i++)
             file << current->getIDManager()[i] << ' ';
 
-        file << current->getSizeRequest() << ' ';
-        for (int i = 0; i < current->getSizeRequest(); i++)
+        file << current->getSizeRequestAccount() << ' ';
+        for (int i = 0; i < current->getSizeRequestAccount(); i++)
+            file << current->getIDRequestAccount()[i] << ' ';
+        
+        file << current->getSizeRequestBorrow() << ' ';
+        for (int i = 0; i < current->getSizeRequestBorrow(); i++)
             file << current->getIDRequestBorrow()[i] << ' ';
 
         file << current->getName() << endl;
