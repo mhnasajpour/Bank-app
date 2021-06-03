@@ -20,12 +20,12 @@ private:
     time_t expDate;
     time_t profitDepositTime;
     bool isBlock;
-    bool isRegister;
+    int isRegister; // 1: request       2: accept       3: reject
 
     AccountBase *next;
 
 public:
-    AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, bool _isCheck = false);  // isCheck : if this account was request isCheck is false else true
+    AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, int _isRegister = 1);  // _isRegister : { 1: request       2: accept       3: reject }
     AccountBase(int ID); //read from file
     AccountBase();
 
@@ -40,15 +40,16 @@ public:
     time_t getExpDate() const;
     time_t getProfitTime() const;
     bool getIsBlock() const;
-    bool getIsRegister() const;
+    int getIsRegister() const; // isRegister : { 1: request       2: accept       3: reject }
     AccountBase *getNext() const;
 
     void setType(int _type);
     void setIDBank(int _IDBank);
     void setIDClient(int _IDClient);
-    void setBalance(long double _balance);
+    bool setBalance(long double _balance);
     void setOpenDate(time_t _openDate);
     void setIsBlock(bool _isBlock);
+    void setIsRegister(int _isRegister); // _isRegister : { 1: request       2: accept       3: reject }
     void setNext(AccountBase *_next);
 };
 
@@ -64,7 +65,7 @@ public:
     Account(Client *client);
     Account(AccountBase *head, Client *client);
 
-    void add(int _type, int _IDBank, int _IDClient, long double _balance, bool _isCheck = false);
+    void add(int _type, int _IDBank, int _IDClient, long double _balance, int _isRegister = 1); // _isRegister : { 1: request       2: accept       3: reject }
     void add(AccountBase *_account);
     AccountBase *operator[](int _ID);
 

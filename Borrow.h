@@ -22,12 +22,12 @@ private:
     time_t lastInstallment;
     long double money;
     int numInstallments;
-    bool isRegister;
+    int isRegister; // isRegister : { 1: request       2: accept       3: reject }
 
     BorrowBase *next;
 
 public:
-    BorrowBase(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, bool _isCheck = false);
+    BorrowBase(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, int _isRegister = 1);
     BorrowBase(int ID);
     BorrowBase();
 
@@ -43,7 +43,7 @@ public:
     time_t getLastInstallment() const;
     long double getMoney() const;
     int getNumInstallments() const;
-    bool getIsRegister() const;
+    int getIsRegister() const; // _isRegister : { 1: request       2: accept       3: reject }
     BorrowBase *getNext() const;
 
     void setIDBank(int _IDBank);
@@ -54,7 +54,7 @@ public:
     void setLastInstallment(int countMonth);
     void setMoney(long double _money);
     void setNumInstallments(int _numInstallments);
-    void setIsRegister(bool _isRegister);
+    void setIsRegister(int _isRegister); // _isRegister : { 1: request       2: accept       3: reject }
     void setNext(BorrowBase *_next);
 };
 
@@ -70,7 +70,7 @@ public:
     Borrow(Account *account, Client *client);
     Borrow(BorrowBase *head, Account *account, Client *client);
 
-    void add(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, bool _isCheck = false);
+    void add(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, int _isRegister = 1);
     void add(BorrowBase *_borrow);
     BorrowBase *operator[](int _ID);
 

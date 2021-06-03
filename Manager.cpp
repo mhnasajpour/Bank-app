@@ -254,5 +254,4 @@ Manager::~Manager()
     }
 
     file.close();
-    delete[] head;
 }

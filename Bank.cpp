@@ -1,10 +1,11 @@
 #include "Bank.h"
 #include <fstream>
 #include <limits>
+#include <cstdlib>
 
 int BankBase::num = 0;
 
-BankBase::BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password)
+BankBase::BankBase(string _name, int _branch, string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow)
 {
     ID = num++;
 
@@ -52,15 +53,16 @@ BankBase::BankBase(int _ID)
         file >> IDManager[i];
 
     file >> sizeRequestAccount;
-    IDRequestBorrow = (int *)malloc(sizeof(int) * sizeRequestAccount);
+    IDRequestAccount = (int *)malloc(sizeof(int) * sizeRequestAccount);
     for (int i = 0; i < sizeRequestAccount; i++)
         file >> IDRequestAccount[i];
-    
+
     file >> sizeRequestBorrow;
     IDRequestBorrow = (int *)malloc(sizeof(int) * sizeRequestBorrow);
     for (int i = 0; i < sizeRequestBorrow; i++)
         file >> IDRequestBorrow[i];
 
+    file.ignore(1);
     getline(file, name);
 
     next = nullptr;
@@ -209,54 +211,50 @@ void BankBase::setBranch(int _branch)
     branch = _branch;
 }
 
-void BankBase::setIDAccount(int *_IDAccount)
+void BankBase::addIDAccount(int _IDAccount)
 {
-    IDAccount = _IDAccount;
+    addNode(IDAccount, sizeAcc, _IDAccount);
 }
 
-void BankBase::setIDBorrow(int *_IDBorrow)
+void BankBase::addIDBorrow(int _IDBorrow)
 {
-    IDBorrow = _IDBorrow;
+    addNode(IDBorrow, sizeBorrow, _IDBorrow);
 }
 
-void BankBase::setIDManager(int *_IDManager)
+void BankBase::addIDManager(int _IDManager)
 {
-    IDManager = _IDManager;
+    addNode(IDManager, sizeManager, _IDManager);
 }
 
-void BankBase::setIDRequestAccount(int *_IDRequestAccount)
+void BankBase::addIDRequestAccount(int _IDRequestAccount)
 {
-    IDRequestAccount = _IDRequestAccount;
+    addNode(IDRequestAccount, sizeRequestAccount, _IDRequestAccount);
 }
 
-void BankBase::setIDRequestBorrow(int *_IDRequestBorrow)
+void BankBase::addIDRequestBorrow(int _IDRequestBorrow)
 {
-    IDRequestBorrow = _IDRequestBorrow;
+    addNode(IDRequestBorrow, sizeRequestBorrow, _IDRequestBorrow);
 }
 
-void BankBase::setSizeAcc(int _sizeAcc)
+void BankBase::removeIDAccount(int _IDAccount)
 {
-    sizeAcc = _sizeAcc;
+    removeNode(IDAccount, sizeAcc, _IDAccount);
 }
-
-void BankBase::setSizeBorrow(int _sizeBorrow)
+void BankBase::removeIDBorrow(int _IDBorrow)
 {
-    sizeBorrow = _sizeBorrow;
+    removeNode(IDBorrow, sizeBorrow, _IDBorrow);
 }
-
-void BankBase::setSizeManager(int _sizeManager)
+void BankBase::removeIDManager(int _IDManager)
 {
-    sizeManager = _sizeManager;
+    removeNode(IDManager, sizeManager, _IDManager);
 }
-
-void BankBase::setSizeRequestAccount(int _sizeRequestAccount)
+void BankBase::removeIDRequestAccount(int _IDRequestAccount)
 {
-    sizeRequestAccount = _sizeRequestAccount;
+    removeNode(IDRequestAccount, sizeRequestAccount, _IDRequestAccount);
 }
-
-void BankBase::setSizeRequestBorrow(int _sizeRequestBorrow)
+void BankBase::removeIDRequestBorrow(int _IDRequestBorrow)
 {
-    sizeRequestBorrow = _sizeRequestBorrow;
+    removeNode(IDRequestBorrow, sizeRequestBorrow, _IDRequestBorrow);
 }
 
 void BankBase::setUsername(string _username)
@@ -283,7 +281,7 @@ Bank::Bank()
     int count;
     file >> count;
     file.close();
-    if(!file)
+    if (!file)
         count = 0;
 
     int num = 0;
@@ -314,9 +312,9 @@ Bank::Bank(BankBase *_head)
         last = last->getNext();
 }
 
-void Bank::add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password)
+void Bank::add(string _name, int _branch, string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow)
 {
-    BankBase *node = new BankBase(_name, _branch, _IDAccount, _IDBorrow, _IDManager, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeManager, _sizeRequestAccount, _sizeRequestBorrow, _username, _password);
+    BankBase *node = new BankBase(_name, _branch, _username, _password, _IDAccount, _IDBorrow, _IDManager, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeManager, _sizeRequestAccount, _sizeRequestBorrow);
 
     if (head == nullptr)
     {
@@ -382,7 +380,7 @@ Bank::~Bank()
         file << current->getSizeRequestAccount() << ' ';
         for (int i = 0; i < current->getSizeRequestAccount(); i++)
             file << current->getIDRequestAccount()[i] << ' ';
-        
+
         file << current->getSizeRequestBorrow() << ' ';
         for (int i = 0; i < current->getSizeRequestBorrow(); i++)
             file << current->getIDRequestBorrow()[i] << ' ';
@@ -392,5 +390,30 @@ Bank::~Bank()
     }
 
     file.close();
-    delete[] head;
+}
+
+void removeNode(int *array, int &size, int num)
+{
+    int i = 0;
+    for (; i < size - 1; i++)
+        if (num == array[i])
+            break;
+
+    for (int j = i; j < size - 1; j++)
+        array[j] = array[j + 1];
+
+    size--;
+    array = (int *)realloc(array, sizeof(int) * size);
+}
+
+void addNode(int *array, int &size, int num)
+{
+    size++;
+
+    if (array == nullptr)
+        array = (int *)malloc(sizeof(int));
+    else
+        array = (int *)realloc(array, sizeof(int) * (size));
+
+    array[size - 1] = num;
 }

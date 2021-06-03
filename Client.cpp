@@ -4,7 +4,7 @@
 
 int ClientBase::num = 0;
 
-ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year,string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll) : birthDate(_day, _month, _year)
+ClientBase::ClientBase(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll) : birthDate(_day, _month, _year)
 {
     ID = num++;
 
@@ -222,44 +222,44 @@ void ClientBase::setBirthDate(Date _birthDate)
     birthDate = _birthDate;
 }
 
-void ClientBase::setIDAccount(int *_IDAccount)
+void ClientBase::addIDAccount(int _IDAccount)
 {
-    IDAccount = _IDAccount;
+    addNode(IDAccount, sizeAcc, _IDAccount);
 }
 
-void ClientBase::setIDBorrow(int *_IDBorrow)
+void ClientBase::addIDBorrow(int _IDBorrow)
 {
-    IDBorrow = _IDBorrow;
+    addNode(IDBorrow, sizeBorrow, _IDBorrow);
 }
 
-void ClientBase::setIDRequestAccount(int *_IDRequestAccount)
+void ClientBase::addIDRequestAccount(int _IDRequestAccount)
 {
-    IDRequestAccount = _IDRequestAccount;
+    addNode(IDRequestAccount, sizeRequestAccount, _IDRequestAccount);
 }
 
-void ClientBase::setIDRequestBorrow(int *_IDRequestBorrow)
+void ClientBase::addIDRequestBorrow(int _IDRequestBorrow)
 {
-    IDRequestBorrow = _IDRequestBorrow;
+    addNode(IDRequestBorrow, sizeRequestBorrow, _IDRequestBorrow);
 }
 
-void ClientBase::setSizeAcc(int _sizeAcc)
+void ClientBase::removeIDAccount(int _IDAccount)
 {
-    sizeAcc = _sizeAcc;
+    removeNode(IDAccount, sizeAcc, _IDAccount);
 }
 
-void ClientBase::setSizeBorrow(int _sizeBorrow)
+void ClientBase::removeIDBorrow(int _IDBorrow)
 {
-    sizeBorrow = _sizeBorrow;
+    removeNode(IDBorrow, sizeBorrow, _IDBorrow);
 }
 
-void ClientBase::setSizeRequestAcc(int _sizeRequestAcc)
+void ClientBase::removeIDRequestAccount(int _IDRequestAccount)
 {
-    sizeRequestAccount = _sizeRequestAcc;
+    removeNode(IDRequestAccount, sizeRequestAccount, _IDRequestAccount);
 }
 
-void ClientBase::setSizeRequestBorrow(int _sizeRequestBorrow)
+void ClientBase::removeIDRequestBorrow(int _IDRequestBorrow)
 {
-    sizeRequestBorrow = _sizeRequestBorrow;
+    removeNode(IDRequestBorrow, sizeRequestBorrow, _IDRequestBorrow);
 }
 
 void ClientBase::setBalanceAll(long long unsigned _balanceAll)
@@ -291,7 +291,7 @@ Client::Client()
     int count;
     file >> count;
     file.close();
-    if(!file)
+    if (!file)
         count = 0;
 
     int num = 0;
@@ -324,7 +324,7 @@ Client::Client(ClientBase *_head)
 
 void Client::add(string _firstName, string _lastName, string _nationalCode, int _day, int _month, int _year, string _username, string _password, int *_IDAccount, int *_IDBorrow, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeRequestAcc, int _sizeRequestBorrow, long long unsigned _balanceAll)
 {
-    ClientBase *node = new ClientBase(_firstName, _lastName, _nationalCode, _day, _month, _year,_username, _password, _IDAccount, _IDBorrow, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeRequestAcc, _sizeRequestBorrow, _balanceAll);
+    ClientBase *node = new ClientBase(_firstName, _lastName, _nationalCode, _day, _month, _year, _username, _password, _IDAccount, _IDBorrow, _IDRequestAccount, _IDRequestBorrow, _sizeAcc, _sizeBorrow, _sizeRequestAcc, _sizeRequestBorrow, _balanceAll);
 
     if (head == nullptr)
     {
@@ -399,5 +399,4 @@ Client::~Client()
     }
 
     file.close();
-    delete[] head;
 }

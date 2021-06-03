@@ -29,7 +29,7 @@ private:
     BankBase *next;
 
 public:
-    BankBase(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password);
+    BankBase(string _name, int _branch, string _username, string _password, int *_IDAccount = nullptr, int *_IDBorrow = nullptr, int *_IDManager = nullptr, int *_IDRequestAccount = nullptr, int *_IDRequestBorrow = nullptr, int _sizeAcc = 0, int _sizeBorrow = 0, int _sizeManager = 0, int _sizeRequestAccount = 0, int _sizeRequestBorrow = 0);
     BankBase(int ID);
     BankBase();
 
@@ -59,16 +59,16 @@ public:
 
     void setName(string _name);
     void setBranch(int _branch);
-    void setIDAccount(int *_IDAccount);
-    void setIDBorrow(int *_IDBorrow);
-    void setIDManager(int *_IDManager);
-    void setIDRequestAccount(int *_IDRequestAccount);
-    void setIDRequestBorrow(int *_IDRequestBorrow);
-    void setSizeAcc(int _sizeAcc);
-    void setSizeBorrow(int _sizeBorrow);
-    void setSizeManager(int _sizeManager);
-    void setSizeRequestAccount(int _sizeRequestAccount);
-    void setSizeRequestBorrow(int _sizeRequestBorrow);
+    void addIDAccount(int _IDAccount);
+    void addIDBorrow(int _IDBorrow);
+    void addIDManager(int _IDManager);
+    void addIDRequestAccount(int _IDRequestAccount);
+    void addIDRequestBorrow(int _IDRequestBorrow);
+    void removeIDAccount(int _IDAccount);
+    void removeIDBorrow(int _IDBorrow);
+    void removeIDManager(int _IDManager);
+    void removeIDRequestAccount(int _IDRequestAccount);
+    void removeIDRequestBorrow(int _IDRequestBorrow);
     void setUsername(string _username);
     void setPassword(string _password);
     void setNext(BankBase *_next);
@@ -84,11 +84,14 @@ public:
     Bank();
     Bank(BankBase *head);
 
-    void add(string _name, int _branch, int *_IDAccount, int *_IDBorrow, int *_IDManager, int *_IDRequestAccount, int *_IDRequestBorrow, int _sizeAcc, int _sizeBorrow, int _sizeManager, int _sizeRequestAccount, int _sizeRequestBorrow, string _username, string _password);
+    void add(string _name, int _branch, string _username, string _password, int *_IDAccount = nullptr, int *_IDBorrow = nullptr, int *_IDManager = nullptr, int *_IDRequestAccount = nullptr, int *_IDRequestBorrow = nullptr, int _sizeAcc = 0, int _sizeBorrow = 0, int _sizeManager = 0, int _sizeRequestAccount = 0, int _sizeRequestBorrow = 0);
     void add(BankBase *_bank);
     BankBase *operator[](int _ID);
 
     ~Bank();
 };
+
+void removeNode(int *array, int &size, int num);
+void addNode(int *array, int &size, int num);
 
 #endif

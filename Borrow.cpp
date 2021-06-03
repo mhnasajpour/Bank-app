@@ -4,7 +4,7 @@
 
 int BorrowBase::num = 0;
 
-BorrowBase::BorrowBase(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, bool _isCheck)
+BorrowBase::BorrowBase(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, int _isRegister)
 {
     ID = num++;
 
@@ -17,7 +17,7 @@ BorrowBase::BorrowBase(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive
     lastInstallment = time(NULL);
     money = _money;
     numInstallments = _numInstallments;
-    isRegister = _isCheck;
+    isRegister = _isRegister;
 
     next = nullptr;
 }
@@ -48,7 +48,7 @@ BorrowBase::BorrowBase()
     lastInstallment = time(NULL);
     money = 0;
     numInstallments = 0;
-    isRegister = false;
+    isRegister = 1;
 
     next = nullptr;
 }
@@ -108,7 +108,7 @@ int BorrowBase::getNumInstallments() const
     return numInstallments;
 }
 
-bool BorrowBase::getIsRegister() const
+int BorrowBase::getIsRegister() const
 {
     return isRegister;
 }
@@ -161,10 +161,10 @@ void BorrowBase::setNumInstallments(int _numInstallments)
     endTime = startTime + (numInstallments * 2628000);
 }
 
-void BorrowBase::setIsRegister(bool _isRegister)
+void BorrowBase::setIsRegister(int _isRegister)
 {
     isRegister = _isRegister;
-    if(isRegister)
+    if(isRegister == 1)
     {
         startTime = time(NULL);
         endTime = (numInstallments * 2628000) + time(NULL);
@@ -246,9 +246,9 @@ void Borrow::checkBorrows(Account *account, Client *client)
     }
 }
 
-void Borrow::add(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, bool _isCheck)
+void Borrow::add(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive, int _money, int _numInstallments, int _isRegister)
 {
-    BorrowBase *node = new BorrowBase(_IDBank, _IDClient, _IDAccget, _IDAccgive, _money, _numInstallments, _isCheck);
+    BorrowBase *node = new BorrowBase(_IDBank, _IDClient, _IDAccget, _IDAccgive, _money, _numInstallments, _isRegister);
 
     if (head == nullptr)
     {
@@ -304,5 +304,4 @@ Borrow::~Borrow()
     }
 
     file.close();
-    delete[] head;
 }

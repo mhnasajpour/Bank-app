@@ -4,7 +4,7 @@
 
 int AccountBase::num = 0;
 
-AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, bool _isCheck) // isCheck : if this account was request isCheck is false else true
+AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, int _isRegister) // _isRegister : { 1: request       2: accept       3: reject }
 {
     ID = num++;
 
@@ -13,7 +13,7 @@ AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _bal
     IDClient = _IDClient;
     balance = _balance;
     isBlock = false;
-    isRegister = _isCheck;
+    isRegister = _isRegister;
     openDate = time(NULL);
     profitDepositTime = time(NULL);
 
@@ -62,7 +62,7 @@ AccountBase::AccountBase()
     profitDepositTime = time(NULL);
     expDate = openDate;
     isBlock = false;
-    isRegister = false;
+    isRegister = 1;
 
     next = nullptr;
 }
@@ -117,7 +117,7 @@ bool AccountBase::getIsBlock() const
     return isBlock;
 }
 
-bool AccountBase::getIsRegister() const
+int AccountBase::getIsRegister() const
 {
     return isRegister;
 }
@@ -158,9 +158,13 @@ void AccountBase::setIDClient(int _IDClient)
     IDClient = _IDClient;
 }
 
-void AccountBase::setBalance(long double _balance)
+bool AccountBase::setBalance(long double _balance)
 {
+    if(balance + _balance < 0)
+        return 0;
+
     balance += _balance;
+    return 1;
 }
 
 void AccountBase::setOpenDate(time_t _openDate)
@@ -173,6 +177,11 @@ void AccountBase::setOpenDate(time_t _openDate)
 void AccountBase::setIsBlock(bool _isBlock)
 {
     isBlock = _isBlock;
+}
+
+void AccountBase::setIsRegister(int _isRegister) // _isRegister : { 1: request       2: accept       3: reject }
+{
+    isRegister = _isRegister;
 }
 
 void AccountBase::setNext(AccountBase *_next)
@@ -253,9 +262,9 @@ void Account::profitTime(Client *client)
     }
 }
 
-void Account::add(int _type, int _IDBank, int _IDClient, long double _balance, bool _isCheck)
+void Account::add(int _type, int _IDBank, int _IDClient, long double _balance, int _isRegister)
 {
-    AccountBase *node = new AccountBase(_type, _IDBank, _IDClient, _balance, _isCheck);
+    AccountBase *node = new AccountBase(_type, _IDBank, _IDClient, _balance, _isRegister);
 
     if (head == nullptr)
     {
@@ -311,5 +320,4 @@ Account::~Account()
     }
 
     file.close();
-    delete[] head;
 }
