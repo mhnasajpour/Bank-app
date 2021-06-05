@@ -237,27 +237,26 @@ void Account::profitTime(Client *client)
     AccountBase *current = head;
     while(current)
     {     
-        if(!current->getIsRegister())
-            return;
-
-        int count = (time(NULL) - current->getProfitTime()) / 86400;
-
-        switch (current->getType())
+        if(current->getIsRegister() == 2)
         {
-        case 1:
-            current->setBalance((0.1 / 365) * count * current->getBalance());
-            (*client)[current->getIDClient()]->setBalanceAll((0.1 / 365) * count * current->getBalance());
-            break;
-        case 2:
-            current->setBalance((0.3 / 365) * count * current->getBalance());
-            (*client)[current->getIDClient()]->setBalanceAll((0.3 / 365) * count * current->getBalance());
-            break;
-        case 3:
-            current->setBalance((0.5 / 365) * count * current->getBalance());
-            (*client)[current->getIDClient()]->setBalanceAll((0.5 / 365) * count * current->getBalance());
-            break;
-        }
+            int count = (time(NULL) - current->getProfitTime()) / 86400;
 
+            switch (current->getType())
+            {
+            case 1:
+                current->setBalance((0.1 / 365) * count * current->getBalance());
+                (*client)[current->getIDClient()]->setBalanceAll((0.1 / 365) * count * current->getBalance());
+                break;
+            case 2:
+                current->setBalance((0.3 / 365) * count * current->getBalance());
+                (*client)[current->getIDClient()]->setBalanceAll((0.3 / 365) * count * current->getBalance());
+                break;
+            case 3:
+                current->setBalance((0.5 / 365) * count * current->getBalance());
+                (*client)[current->getIDClient()]->setBalanceAll((0.5 / 365) * count * current->getBalance());
+                break;
+            }
+        }
         current = current->getNext();
     }
 }
