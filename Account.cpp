@@ -4,11 +4,11 @@
 
 int AccountBase::num = 0;
 
-AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, int _isRegister) // _isRegister : { 1: request       2: accept       3: reject }
+AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _balance, int _isRegister) // _isRegister : { 1: request       2: accept       3: reject        4: Expiration date  }
 {
     ID = num++;
 
-    type = _type;
+    setType(_type);
     IDBank = _IDBank;
     IDClient = _IDClient;
     balance = _balance;
@@ -16,22 +16,6 @@ AccountBase::AccountBase(int _type, int _IDBank, int _IDClient, long double _bal
     isRegister = _isRegister;
     openDate = time(NULL);
     profitDepositTime = time(NULL);
-
-    switch (type)
-    {
-    case 1:
-        expDate = openDate + 15768000;
-        break;
-    case 2:
-        expDate = openDate + 31536000;
-        break;
-    case 3:
-        expDate = openDate + 94608000;
-        break;
-    default:
-        expDate = openDate;
-        break;
-    }
 
     next = nullptr;
 }
@@ -179,9 +163,15 @@ void AccountBase::setIsBlock(bool _isBlock)
     isBlock = _isBlock;
 }
 
-void AccountBase::setIsRegister(int _isRegister) // _isRegister : { 1: request       2: accept       3: reject }
+void AccountBase::setIsRegister(int _isRegister) // _isRegister : { 1: request       2: accept       3: reject      4: Expiration date  }
 {
     isRegister = _isRegister;
+    if(isRegister == 2)
+    {
+        openDate = time(NULL);
+        setType(type);
+        profitDepositTime = time(NULL);
+    }
 }
 
 void AccountBase::setNext(AccountBase *_next)
@@ -236,7 +226,10 @@ void Account::profitTime(Client *client)
 {
     AccountBase *current = head;
     while(current)
-    {     
+    {    
+        if(time(NULL) - current->getExpDate() >= 0)
+            current->setIsRegister(4);
+ 
         if(current->getIsRegister() == 2)
         {
             int count = (time(NULL) - current->getProfitTime()) / 86400;

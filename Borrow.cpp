@@ -12,11 +12,9 @@ BorrowBase::BorrowBase(int _IDBank, int _IDClient, int _IDAccget, int _IDAccgive
     IDClient = _IDClient;
     IDAccget = _IDAccget;
     IDAccgive = _IDAccgive;
-    startTime = time(NULL);
-    endTime = startTime + (_numInstallments * 2628000);
-    lastInstallment = time(NULL);
-    money = _money;
     numInstallments = _numInstallments;
+    setStartTime(time(NULL));
+    money = _money;
     isRegister = _isRegister;
 
     next = nullptr;
@@ -29,7 +27,7 @@ BorrowBase::BorrowBase(int _ID) //read from file
     ifstream file("Borrow.txt");
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
-    
+
     file >> ID >> IDBank >> IDClient >> IDAccget >> IDAccgive >> money >> numInstallments >> startTime >> endTime >> numInstallments >> isRegister;
     next = nullptr;
     file.close();
@@ -43,11 +41,9 @@ BorrowBase::BorrowBase()
     IDClient = 0;
     IDAccget = 0;
     IDAccgive = 0;
-    startTime = time(NULL);
-    endTime = time(NULL);
-    lastInstallment = time(NULL);
-    money = 0;
     numInstallments = 0;
+    setStartTime(time(NULL));
+    money = 0;
     isRegister = 1;
 
     next = nullptr;
@@ -164,7 +160,7 @@ void BorrowBase::setNumInstallments(int _numInstallments)
 void BorrowBase::setIsRegister(int _isRegister)
 {
     isRegister = _isRegister;
-    if(isRegister == 1)
+    if (isRegister == 2)
     {
         startTime = time(NULL);
         endTime = (numInstallments * 2628000) + time(NULL);
@@ -186,7 +182,7 @@ Borrow::Borrow(Account *account, Client *client)
     int count;
     file >> count;
     file.close();
-    if(!file)
+    if (!file)
         count = 0;
 
     int num = 0;
@@ -220,29 +216,51 @@ Borrow::Borrow(BorrowBase *_head, Account *account, Client *client)
     checkBorrows(account, client);
 }
 
-void Borrow::checkBorrows(Account *account, Client *client)
+void Borrow::checkBorrows(Account *account, Client *client, int index)
 {
-    BorrowBase *current = head;
-    while(current)
+    if (index == -1)
     {
-        if(!current->getIsRegister() || (time(NULL) - current->getLastInstallment() < 2628000))
-            return;
-
-        int count = (time(NULL) - current->getLastInstallment()) / 2628000;
-        if((*account)[current->getIDAccgive()]->getBalance() < (current->getMoney() / current->getLastInstallment() * count))
+        BorrowBase *current = head;
+        while (current)
         {
-            ClientBase *t = (*client)[current->getIDClient()];
-            for(int i = 0; i < (*client)[current->getIDClient()]->getSizeAcc(); i++)
-                (*account)[t->getIDAccount()[i]]->setIsBlock(true);
+            if (time(NULL) - current->getEndTime() >= 0)
+                current->setIsRegister(4);
 
-            return;
+            if (current->getIsRegister() == 2)
+            {
+                int count = (time(NULL) - current->getLastInstallment()) / 2628000;
+
+                if ((*account)[current->getIDAccgive()]->getBalance() < (current->getMoney() / current->getLastInstallment() * count))
+                {
+                    ClientBase *t = (*client)[current->getIDClient()];
+                    for (int i = 0; i < t->getSizeAcc(); i++)
+                        (*account)[t->getIDAccount()[i]]->setIsBlock(true);
+
+                    continue;
+                }
+
+                (*account)[current->getIDAccgive()]->setBalance((current->getMoney() / current->getNumInstallments() * count) * (-1));
+                (*client)[current->getIDClient()]->setBalanceAll((current->getMoney() / current->getNumInstallments() * count) * (-1));
+                current->setLastInstallment(count);
+            }
+
+            current = current->getNext();
         }
+        return;
+    }
 
-        (*account)[current->getIDAccgive()]->setBalance((current->getMoney() / current->getNumInstallments() * count) * (-1));
-        (*client)[current->getIDClient()]->setBalanceAll((current->getMoney() / current->getNumInstallments() * count) * (-1));
-        current->setLastInstallment(count);
 
-        current = current->getNext();
+    if (borrow[index]->getIsRegister() == 2)
+    {
+        int count = (time(NULL) - borrow[index]->getLastInstallment()) / 2628000;
+
+        ClientBase *t = (*client)[borrow[index]->getIDClient()];
+        for (int i = 0; i < t->getSizeAcc(); i++)
+            (*account)[t->getIDAccount()[i]]->setIsBlock(false);
+
+        (*account)[borrow[index]->getIDAccgive()]->setBalance((borrow[index]->getMoney() / borrow[index]->getNumInstallments() * count) * (-1));
+        (*client)[borrow[index]->getIDClient()]->setBalanceAll((borrow[index]->getMoney() / borrow[index]->getNumInstallments() * count) * (-1));
+        borrow[index]->setLastInstallment(count);
     }
 }
 
