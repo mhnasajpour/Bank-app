@@ -23,7 +23,7 @@ ManagerBase::ManagerBase(int _ID)
 {
     num++;
 
-    ifstream file("Manager.txt");
+    ifstream file("Files/Manager.txt");
     for (int i = 0; i < (3 * _ID) + 1; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -159,7 +159,7 @@ Manager::Manager()
     head = nullptr;
     last = nullptr;
 
-    ifstream file("Manager.txt");
+    ifstream file("Files/Manager.txt");
     int count;
     file >> count;
     file.close();
@@ -239,7 +239,7 @@ ManagerBase *Manager::operator[](int _ID)
 
 Manager::~Manager()
 {
-    ofstream file("Manager.txt");
+    ofstream file("Files/Manager.txt");
     file << ManagerBase::getNum() << endl;
 
     ManagerBase *current = head;

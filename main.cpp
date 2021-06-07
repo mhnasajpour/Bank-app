@@ -1,10 +1,8 @@
-#include "Bank.cpp"
-#include "Manager.cpp"
-#include "Client.cpp"
-#include "Account.cpp"
-#include "Borrow.cpp"
-#include "Date.cpp"
-#include "Logo.cpp"
+#include "Bank/Bank.h"
+#include "Users/Client.h"
+#include "Users/Manager.h"
+#include "Services/Account.h"
+#include "Services/Borrow.h"
 #include <thread>
 #include <chrono>
 
@@ -14,6 +12,7 @@ Client client;
 Account account(&client);
 Borrow borrow(&account, &client);
 
+void logo();
 void enter();
 void login();
 void signUp();
@@ -34,8 +33,6 @@ void moveBalance(ClientBase *client);
 void request_createAccount(ClientBase *client);
 void showBorrowsClient(int _IDClient);
 void request_getBorrow(ClientBase *client);
-
-void bankPanel(int _ID);
 
 int main()
 {
@@ -75,13 +72,13 @@ void login()
     {
         system("clear");
         cout << "\n\n\n\t1 => Client"
-             << "\n\n\t2 => Employees\n\n\t3 => Central Bank\n\n\tInput: ";
+             << "\n\n\t2 => Employees\n\n\tInput: ";
         int _part;
         do
         {
             cout << '\t';
             cin >> _part;
-        } while (_part < 1 || _part > 3);
+        } while (_part < 1 || _part > 2);
 
         system("clear");
         string _username, _password;
@@ -102,12 +99,6 @@ void login()
             for (int i = 0; i < ManagerBase::getNum(); i++)
                 if (manager[i]->getUsername() == _username && manager[i]->getPassword() == _password)
                     managerPanel(i);
-
-            break;
-        case 3:
-            for (int i = 0; i < BankBase::getNum(); i++)
-                if (bank[i]->getUsername() == _username && bank[i]->getPassword() == _password)
-                    bankPanel(i);
 
             break;
         }

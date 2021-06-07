@@ -2,7 +2,7 @@
 #define __Client
 
 #include <iostream>
-#include "Date.h"
+#include "../OtherClasses/Date.h"
 using namespace std;
 
 class ClientBase
@@ -92,5 +92,8 @@ public:
 
     ~Client();
 };
+
+void removeNode(int *array, int &size, int num);
+void addNode(int *array, int &size, int num);
 
 #endif

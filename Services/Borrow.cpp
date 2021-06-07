@@ -24,7 +24,7 @@ BorrowBase::BorrowBase(int _ID) //read from file
 {
     num++;
 
-    ifstream file("Borrow.txt");
+    ifstream file("Files/Borrow.txt");
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -178,7 +178,7 @@ Borrow::Borrow(Account *account, Client *client)
     head = nullptr;
     last = nullptr;
 
-    ifstream file("Borrow.txt");
+    ifstream file("Files/Borrow.txt");
     int count;
     file >> count;
     file.close();
@@ -313,7 +313,7 @@ BorrowBase *Borrow::operator[](int _ID)
 
 Borrow::~Borrow()
 {
-    ofstream file("Borrow.txt");
+    ofstream file("Files/Borrow.txt");
     file << BorrowBase::getNum() << endl;
 
     BorrowBase *current = head;

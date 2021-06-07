@@ -24,7 +24,7 @@ AccountBase::AccountBase(int _ID) //read from file
 {
     num++;
 
-    ifstream file("Account.txt");
+    ifstream file("Files/Account.txt");
 
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -184,7 +184,7 @@ Account::Account(Client *client)
     head = nullptr;
     last = nullptr;
 
-    ifstream file("Account.txt");
+    ifstream file("Files/Account.txt");
     int count;
     file >> count;
     file.close();
@@ -299,7 +299,7 @@ AccountBase *Account::operator[](int _ID)
 
 Account::~Account()
 {
-    ofstream file("Account.txt");
+    ofstream file("Files/Account.txt");
     file << AccountBase::getNum() << endl;
 
     AccountBase *current = head;

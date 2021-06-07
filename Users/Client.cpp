@@ -30,7 +30,7 @@ ClientBase::ClientBase(int _ID)
 {
     num++;
 
-    ifstream file("Client.txt");
+    ifstream file("Files/Client.txt");
     for (int i = 0; i < (3 * _ID) + 1; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -287,7 +287,7 @@ Client::Client()
     head = nullptr;
     last = nullptr;
 
-    ifstream file("Client.txt");
+    ifstream file("Files/Client.txt");
     int count;
     file >> count;
     file.close();
@@ -367,7 +367,7 @@ ClientBase *Client::operator[](int _ID)
 
 Client::~Client()
 {
-    ofstream file("Client.txt");
+    ofstream file("Files/Client.txt");
     file << ClientBase::getNum() << endl;
 
     ClientBase *current = head;

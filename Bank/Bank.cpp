@@ -31,7 +31,7 @@ BankBase::BankBase(int _ID)
 {
     num++;
 
-    ifstream file("Bank.txt");
+    ifstream file("Bank/Bank.txt");
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -277,7 +277,7 @@ Bank::Bank()
     head = nullptr;
     last = nullptr;
 
-    ifstream file("Bank.txt");
+    ifstream file("Bank/Bank.txt");
     int count;
     file >> count;
     file.close();
@@ -357,7 +357,7 @@ BankBase *Bank::operator[](int _ID)
 
 Bank::~Bank()
 {
-    ofstream file("Bank.txt");
+    ofstream file("Bank/Bank.txt");
     file << BankBase::getNum() << endl;
 
     BankBase *current = head;
