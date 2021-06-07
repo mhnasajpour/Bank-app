@@ -243,18 +243,18 @@ void clientPanel(int _ID)
     {
         system("clear");
         cout << "\n\n\t" << client[_ID]->getFirstName() << ' ' << client[_ID]->getLastName();
-        cout << "\n\n\t1 => Show profile\n\n\t2 => Show accounts\n\t3 => Move balance\n\t4 => Request create account\n\n\t5 => Show borrows\n\t6 => Request get borrow\n\t7 => Exit\n\n\tINPUT: ";
+        cout << "\n\n\t1 => Show profile\n\n\t2 => Show accounts\n\t3 => Move balance\n\t4 => Request create account\n\n\t5 => Show borrows\n\t6 => Request get borrow\n\n\t7 => Log out\n\t8 => Exit\n\n\tINPUT: ";
 
         int choice;
         do
         {
             cin >> choice;
-            if (choice < 1 || choice > 7)
+            if (choice < 1 || choice > 8)
             {
                 cout << "\n\n\tYour input is invalid!!!" << endl;
                 cout << "\tInput: ";
             }
-        } while (choice < 1 || choice > 7);
+        } while (choice < 1 || choice > 8);
 
         switch (choice)
         {
@@ -276,6 +276,9 @@ void clientPanel(int _ID)
         case 6:
             request_getBorrow(client[_ID]);
             break;
+        case 7:
+            enter();
+            break;
         default:
             exit(0);
         }
@@ -288,18 +291,18 @@ void managerPanel(int _ID)
     {
         system("clear");
         cout << "\n\n\t" << manager[_ID]->getFirstName() << ' ' << manager[_ID]->getLastName();
-        cout << "\n\n\t1 => Show profile\n\n\t2 => Show accounts\n\t3 => Management accounts\n\t4 => Add account\n\n\t5 => Show borrows\n\t6 => Management borrows\n\t7 => Add borrow\n\n\t8 => Exit\n\n\tINPUT: ";
+        cout << "\n\n\t1 => Show profile\n\n\t2 => Show accounts\n\t3 => Management accounts\n\t4 => Add account\n\n\t5 => Show borrows\n\t6 => Management borrows\n\t7 => Add borrow\n\n\t8 => Log out\n\t9 => Exit\n\n\tINPUT: ";
 
         int choice;
         do
         {
             cin >> choice;
-            if (choice < 1 || choice > 8)
+            if (choice < 1 || choice > 9)
             {
                 cout << "\n\n\tYour input is invalid!!!" << endl;
                 cout << "\tInput: ";
             }
-        } while (choice < 1 || choice > 8);
+        } while (choice < 1 || choice > 9);
 
         switch (choice)
         {
@@ -323,6 +326,9 @@ void managerPanel(int _ID)
             break;
         case 7:
             addBorrow(manager[_ID]->getIDBank());
+            break;
+        case 8:
+            enter();
             break;
         default:
             exit(0);
@@ -632,7 +638,7 @@ void moveBalance(ClientBase *_client)
 
         cout << "\n\n";
         for (int i = 0; i < _client->getSizeAcc(); i++)
-            cout << "\t" << i << " => " << _client->getIDAccount()[i] << endl;
+            cout << "\t" << i << " => IDAccount: " << _client->getIDAccount()[i] << "\tBalance: " << account[_client->getIDAccount()[i]]->getBalance() << endl;
 
         cout << "\n";
         do
@@ -675,15 +681,21 @@ void moveBalance(ClientBase *_client)
                 cout << "\n\tThis account is blocked!!!" << endl;
             }
         } while (_hisIDAccount < 0 || _hisIDAccount >= AccountBase::getNum() || account[_hisIDAccount]->getIsRegister() != 2 || account[_hisIDAccount]->getIsBlock());
+
+        account[_hisIDAccount]->setBalance(_balance);
+        client[account[_hisIDAccount]->getIDClient()]->setBalanceAll(_balance);
+        account[_client->getIDAccount()[_yourIDAccount]]->setBalance(-(_balance));
+        _client->setBalanceAll(-(_balance));
+
+        cout << "\n\n\n\tYour transfer done successfully" << endl;
+        cout << "\n\tIf you want to select account again press 0 else if you want to back menu press 1 ..." << endl;
+        int garbage;
+        cin >> garbage;
+        if (garbage == 0)
+            continue;
+        else
+            return;
     }
-
-    account[_hisIDAccount]->setBalance(_balance);
-    client[account[_hisIDAccount]->getID()]->setBalanceAll(_balance);
-    account[_client->getIDAccount()[_yourIDAccount]]->setBalance(-(_balance));
-    _client->setBalanceAll(-(_balance));
-
-    cout << "\n\n\n\tYour transfer done successfully" << endl;
-    this_thread::sleep_for(chrono::milliseconds(4000));
 }
 
 void showBorrowsClient(int _IDClient)
@@ -776,7 +788,8 @@ void request_getBorrow(ClientBase *_client)
     cout << "\n\n\tInput Borrow information to request it" << endl;
 
     for (int i = 0; i < _client->getSizeAcc(); i++)
-        cout << "\t" << i << " => " << bank[i]->getName() << "    ID: " << account[_client->getIDAccount()[i]]->getID() << endl;
+        cout << "\t" << i << " => "
+             << "  Account ID: " << account[_client->getIDAccount()[i]]->getID() << '\t' << bank[account[_client->getIDAccount()[i]]->getIDBank()]->getName() << endl;
 
     cout << "\n\n";
     do
@@ -793,14 +806,15 @@ void request_getBorrow(ClientBase *_client)
     for (int i = 0; i < _client->getSizeBorrow(); i++)
         if (_IDBank == borrow[_client->getIDBorrow()[i]]->getIDBank())
         {
-            cout << "You have already borrowed from this bank..." << endl;
+            cout << "\tYou have already borrowed from this bank..." << endl;
             this_thread::sleep_for(chrono::milliseconds(4000));
+            return;
         }
 
-    cout << "\n\n";
+    cout << "\n";
     do
     {
-        cout << "\tThe account you want to pay from: ";
+        cout << "\n\tThe account you want to pay from: ";
         cin >> _IDAccgive;
         if (_IDAccgive < 0 || _IDAccgive >= _client->getSizeAcc() || account[_client->getIDAccount()[_IDAccgive]]->getIsRegister() != 2)
         {
@@ -875,6 +889,7 @@ void addAccount(int _IDBank, int _IDManager)
                 bank[_IDBank]->addIDAccount(input);
                 client[account[input]->getIDClient()]->removeIDRequestAccount(input);
                 client[account[input]->getIDClient()]->addIDAccount(input);
+                client[account[input]->getIDClient()]->setBalanceAll(account[input]->getBalance());
                 cout << "\n\tYou accepted this account succussfully" << endl;
             }
             else
@@ -925,10 +940,10 @@ void managementAccounts(int _ID)
 
         if (input == 1)
         {
-            cout << "\n\n\tID Account: ";
+            cout << "\n";
             do
             {
-                cout << "\n\tINPUT: ";
+                cout << "\n\tID Account: ";
                 cin >> input;
                 if (input < 0 || input >= AccountBase::getNum())
                 {
@@ -1016,10 +1031,10 @@ void managementAccounts(int _ID)
                     cout << "\n\t---------------------------------------------------------" << endl;
                 }
 
-                cout << "\n\n\tID Account: ";
+                cout << "\n";
                 do
                 {
-                    cout << "\n\tINPUT: ";
+                    cout << "\n\tID Account: ";
                     cin >> input;
                     if (input < 0 || input >= AccountBase::getNum())
                     {
@@ -1224,6 +1239,8 @@ void addBorrow(int _ID)
                 bank[_ID]->addIDBorrow(input);
                 client[borrow[input]->getIDClient()]->removeIDRequestBorrow(input);
                 client[borrow[input]->getIDClient()]->addIDBorrow(input);
+                client[borrow[input]->getIDClient()]->setBalanceAll(borrow[input]->getMoney());
+                account[borrow[input]->getIDAccget()]->setBalance(borrow[input]->getMoney());
                 cout << "\n\tYou accepted this borrow succussfully" << endl;
             }
             else
@@ -1312,7 +1329,7 @@ void managementBorrows(int _ID)
             cout << "\n\t---------------------------------------------------------" << endl;
 
             int input;
-            cout << "\n\n\t1 => Get Borrow\t2 = > Cancel\n";
+            cout << "\n\n\t1 => Get Lend\t2 = > Cancel\n";
             do
             {
                 cout << "\tInput: ";
@@ -1325,7 +1342,7 @@ void managementBorrows(int _ID)
 
             if (input == 1)
             {
-                if((time(NULL) - borrow[choice]->getLastInstallment()) / 2628000 == 0)
+                if ((time(NULL) - borrow[choice]->getLastInstallment()) / 2628000 == 0)
                     cout << "\n\n\tThis account has already paid its debt!!!" << endl;
 
                 else if ((account[borrow[choice]->getIDAccgive()]->getBalance()) >= (borrow[choice]->getMoney() / borrow[choice]->getNumInstallments() * count))
@@ -1333,7 +1350,7 @@ void managementBorrows(int _ID)
                     borrow.checkBorrows(&account, &client, choice);
                     cout << "\n\n\tYou received all the loans" << endl;
                 }
-                
+
                 else
                     cout << "\n\n\tThis account does not have enough balance!!!" << endl;
             }

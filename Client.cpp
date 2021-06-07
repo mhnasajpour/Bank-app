@@ -262,7 +262,7 @@ void ClientBase::removeIDRequestBorrow(int _IDRequestBorrow)
     removeNode(IDRequestBorrow, sizeRequestBorrow, _IDRequestBorrow);
 }
 
-void ClientBase::setBalanceAll(long long unsigned _balanceAll)
+void ClientBase::setBalanceAll(long long _balanceAll)
 {
     balanceAll += _balanceAll;
 }

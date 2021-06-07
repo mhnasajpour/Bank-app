@@ -28,7 +28,7 @@ BorrowBase::BorrowBase(int _ID) //read from file
     for (int i = 0; i <= _ID; ++i)
         file.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    file >> ID >> IDBank >> IDClient >> IDAccget >> IDAccgive >> money >> numInstallments >> startTime >> endTime >> numInstallments >> isRegister;
+    file >> ID >> IDBank >> IDClient >> IDAccget >> IDAccgive >> money >> numInstallments >> startTime >> endTime >> lastInstallment >> isRegister;
     next = nullptr;
     file.close();
 }
@@ -218,9 +218,10 @@ Borrow::Borrow(BorrowBase *_head, Account *account, Client *client)
 
 void Borrow::checkBorrows(Account *account, Client *client, int index)
 {
+    BorrowBase *current = head;
+    
     if (index == -1)
     {
-        BorrowBase *current = head;
         while (current)
         {
             if (time(NULL) - current->getEndTime() >= 0)
@@ -249,18 +250,21 @@ void Borrow::checkBorrows(Account *account, Client *client, int index)
         return;
     }
 
+    current = head;
+    for(int i = 0; i < index; i++)
+        current = current->getNext();
 
-    if (borrow[index]->getIsRegister() == 2)
+    if (current->getIsRegister() == 2)
     {
-        int count = (time(NULL) - borrow[index]->getLastInstallment()) / 2628000;
+        int count = (time(NULL) - current->getLastInstallment()) / 2628000;
 
-        ClientBase *t = (*client)[borrow[index]->getIDClient()];
+        ClientBase *t = (*client)[current->getIDClient()];
         for (int i = 0; i < t->getSizeAcc(); i++)
             (*account)[t->getIDAccount()[i]]->setIsBlock(false);
 
-        (*account)[borrow[index]->getIDAccgive()]->setBalance((borrow[index]->getMoney() / borrow[index]->getNumInstallments() * count) * (-1));
-        (*client)[borrow[index]->getIDClient()]->setBalanceAll((borrow[index]->getMoney() / borrow[index]->getNumInstallments() * count) * (-1));
-        borrow[index]->setLastInstallment(count);
+        (*account)[current->getIDAccgive()]->setBalance((current->getMoney() / current->getNumInstallments() * count) * (-1));
+        (*client)[current->getIDClient()]->setBalanceAll((current->getMoney() / current->getNumInstallments() * count) * (-1));
+        current->setLastInstallment(count);
     }
 }
 

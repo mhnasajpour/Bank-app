@@ -70,7 +70,7 @@ public:
     void removeIDBorrow(int _IDBorrow);
     void removeIDRequestAccount(int _IDRequestAccount);
     void removeIDRequestBorrow(int _IDRequestBorrow);
-    void setBalanceAll(long long unsigned _balanceAll);
+    void setBalanceAll(long long _balanceAll);
     void setUsername(string _username);
     void setPassword(string _password);
     void setNext(ClientBase *_next);
